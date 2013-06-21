@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_inappbillinglibrary" default="compile.module.inappbillinglibrary">
+  <dirname property="module.inappbillinglibrary.basedir" file="${ant.file.module_inappbillinglibrary}"/>
+  
+  <property name="module.jdk.home.inappbillinglibrary" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.inappbillinglibrary" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.inappbillinglibrary" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.inappbillinglibrary" value="${compiler.args}"/>
+  
+  <property name="inappbillinglibrary.output.dir" value="${module.inappbillinglibrary.basedir}/out/production/InAppBillingLibrary"/>
+  <property name="inappbillinglibrary.testoutput.dir" value="${module.inappbillinglibrary.basedir}/out/test/InAppBillingLibrary"/>
+  
+  <path id="inappbillinglibrary.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="inappbillinglibrary.module.production.classpath">
+    <path refid="${module.jdk.classpath.inappbillinglibrary}"/>
+  </path>
+  
+  <path id="inappbillinglibrary.runtime.production.module.classpath">
+    <pathelement location="${inappbillinglibrary.output.dir}"/>
+  </path>
+  
+  <path id="inappbillinglibrary.module.classpath">
+    <path refid="${module.jdk.classpath.inappbillinglibrary}"/>
+    <pathelement location="${inappbillinglibrary.output.dir}"/>
+  </path>
+  
+  <path id="inappbillinglibrary.runtime.module.classpath">
+    <pathelement location="${inappbillinglibrary.testoutput.dir}"/>
+    <pathelement location="${inappbillinglibrary.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.inappbillinglibrary">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.inappbillinglibrary">
+    <patternset refid="excluded.from.module.inappbillinglibrary"/>
+  </patternset>
+  
+  <path id="inappbillinglibrary.module.sourcepath">
+    <dirset dir="${module.inappbillinglibrary.basedir}">
+      <include name="src"/>
+      <include name="gen"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.inappbillinglibrary" depends="compile.module.inappbillinglibrary.production,compile.module.inappbillinglibrary.tests" description="Compile module InAppBillingLibrary"/>
+  
+  <target name="compile.module.inappbillinglibrary.production" depends="register.custom.compilers" description="Compile module InAppBillingLibrary; production classes">
+    <mkdir dir="${inappbillinglibrary.output.dir}"/>
+    <javac2 destdir="${inappbillinglibrary.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.inappbillinglibrary}/javac">
+      <compilerarg line="${compiler.args.inappbillinglibrary}"/>
+      <bootclasspath refid="inappbillinglibrary.module.bootclasspath"/>
+      <classpath refid="inappbillinglibrary.module.production.classpath"/>
+      <src refid="inappbillinglibrary.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.inappbillinglibrary"/>
+    </javac2>
+    
+    <copy todir="${inappbillinglibrary.output.dir}">
+      <fileset dir="${module.inappbillinglibrary.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.inappbillinglibrary.basedir}/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.inappbillinglibrary.tests" depends="register.custom.compilers,compile.module.inappbillinglibrary.production" description="compile module InAppBillingLibrary; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.inappbillinglibrary" description="cleanup module">
+    <delete dir="${inappbillinglibrary.output.dir}"/>
+    <delete dir="${inappbillinglibrary.testoutput.dir}"/>
+  </target>
+</project>
