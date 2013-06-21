@@ -52,8 +52,8 @@
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Billing\InAppBillingHelper.cs" />
-    <Compile Include="Billing\BillingResult.cs" />
     <Compile Include="Billing\Product.cs" />
+    <Compile Include="Billing\Constants.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

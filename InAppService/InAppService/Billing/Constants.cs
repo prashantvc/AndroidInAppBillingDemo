@@ -15,6 +15,21 @@ namespace InAppService
 		}
 	}
 
+	public sealed class ItemType{
+		public static string InApp{
+			get{
+				return "inapp";
+			}
+		}
+
+		
+		public static string Subscription{
+			get{
+				return "subs";
+			}
+		}
+	}
+
 	public sealed class Constants{
 		private Constants() {}
 

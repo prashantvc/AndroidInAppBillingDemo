@@ -40,12 +40,12 @@ public class BillingActivity extends Activity {
 
                 mService = IInAppBillingService.Stub.asInterface(service);
                 try {
-                    int supported = mService.isBillingSupported(API_VERSION, getPackageName(), ItemType.getInApp());
+                    int supported = mService.isBillingSupported(API_VERSION, getPackageName(), "inapp");
                     if (supported != 0) {
                         setIsSubscriptionSupported(false);
                     }
 
-                    supported = mService.isBillingSupported(API_VERSION, getPackageName(), ItemType.getSubscription());
+                    supported = mService.isBillingSupported(API_VERSION, getPackageName(), "subs");
                     if (supported == 0) {
                         setIsSubscriptionSupported(true);
                     }

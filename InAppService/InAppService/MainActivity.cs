@@ -32,6 +32,7 @@ namespace InAppService
 
 			button.Click += delegate {
 				billingHelper.QueryInventory (new List<string> { "product1", "product2" }, ItemType.InApp);
+				billingHelper.BuyItem("product1", ItemType.InApp, "payload"); 
 			};
 		}
 

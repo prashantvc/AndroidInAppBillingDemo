@@ -5,19 +5,21 @@ using Xamarin.GoogleInAppBillig;
 using Android.OS;
 using Com.Android.Vending.Billing;
 using Newtonsoft.Json;
+using Android.App;
 
 namespace InAppService
 {
 	public class InAppBillingHelper
 	{
-		Context appContext;
+		Activity appContext;
 		IInAppBillingService billingService;
 		List<Product> products;
+		const int ApiVersion = 3;
 
-		public InAppBillingHelper (Context context, IInAppBillingService billingService)
+		public InAppBillingHelper (Activity context, IInAppBillingService billingService)
 		{
 			this.billingService = billingService;
-			appContext = context.ApplicationContext;
+			appContext = context;
 			products = new List<Product> ();
 		}
 
@@ -26,7 +28,7 @@ namespace InAppService
 			Bundle querySku = new Bundle ();
 			querySku.PutStringArrayList (Constants.ItemIdList, skuList);
 
-			Bundle skuDetails = billingService.GetSkuDetails (3, appContext.PackageName, itemType, querySku);
+			Bundle skuDetails = billingService.GetSkuDetails (ApiVersion, appContext.PackageName, itemType, querySku);
 
 			if (skuDetails.ContainsKey (Constants.SkuDetailsList)) {
 
@@ -39,6 +41,15 @@ namespace InAppService
 				}
 			}
 
+		}
+
+		public void BuyItem (string sku, string itemType, string payload)
+		{
+			var buyIntentBundle = billingService.GetBuyIntent (ApiVersion, appContext.PackageName,sku, itemType, payload);
+			var pendingIntent = buyIntentBundle.GetParcelable ("BUY_INTENT") as PendingIntent;
+			if (pendingIntent != null) {
+				appContext.StartIntentSenderForResult (pendingIntent.IntentSender, 1001, new Intent (), 0, 0, 0);
+			}
 		}
 	}
 }

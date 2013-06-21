@@ -1,21 +1,32 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
   <MonoDevelop.Ide.Workbench ActiveDocument="InAppService/MainActivity.cs">
     <Files>
-      <File FileName="InAppService/MainActivity.cs" Line="19" Column="3" />
-      <File FileName="InAppService/Billing/InAppBillingHelper.cs" Line="1" Column="1" />
-      <File FileName="InAppService/Properties/AssemblyInfo.cs" Line="1" Column="1" />
+      <File FileName="InAppService/MainActivity.cs" Line="31" Column="45" />
+      <File FileName="InAppService/Billing/InAppBillingHelper.cs" Line="38" Column="52" />
+      <File FileName="InAppService/Billing/Constants.cs" Line="14" Column="5" />
+      <File FileName="InAppService/Billing/Product.cs" Line="16" Column="3" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="InAppService" expanded="True">
+            <Node name="ComponentReferenceFolder" expanded="True" />
+            <Node name="Billing" expanded="True" />
+            <Node name="Properties" expanded="True" />
+            <Node name="MainActivity.cs" selected="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/prashantvc/Projects/InAppService/InAppService/MainActivity.cs" line="32" column="1" />
-      <Breakpoint file="/Users/prashantvc/IdeaProjects/InAppBillingLibrary/InAppService/InAppService/Billing/InAppBillingHelper.cs" line="27" column="1" />
-      <Breakpoint file="/Users/prashantvc/IdeaProjects/InAppBillingLibrary/InAppService/InAppService/MainActivity.cs" line="29" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
     <Watch file="../InAppBillingDemo/InAppBillingDemo/MainActivity.cs" line="53" offsetX="683" offsetY="780" expression="m" liveUpdate="False" />
   </MonoDevelop.Ide.DebuggingService.PinnedWatches>
-  <MonoDevelop.Ide.ItemProperties.InAppService AndroidDeviceId-Release="192.168.56.101:5555" AndroidDeviceId-Debug="192.168.56.101:5555" />
+  <MonoDevelop.Ide.ItemProperties.InAppService AndroidDeviceId-Release="015d43636127fa14" AndroidDeviceId-Debug="015d43636127fa14" />
 </Properties>
