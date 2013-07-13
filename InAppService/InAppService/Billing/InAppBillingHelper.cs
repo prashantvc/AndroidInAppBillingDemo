@@ -40,6 +40,22 @@ namespace InAppService
 			return getSkuDetailsTask;
 		}
 
+		/// <summary>
+		/// Buys an items
+		/// </summary>
+		/// <param name="product">Product.</param>
+		/// <param name="payload">Payload.</param>
+		public void BuyItem(Product product, string payload)
+		{
+			BuyItem (product.ProductId, product.Type, payload);
+		}
+
+		/// <summary>
+		/// Buys an item.
+		/// </summary>
+		/// <param name="sku">Sku.</param>
+		/// <param name="itemType">Item type.</param>
+		/// <param name="payload">Payload.</param>
 		public void BuyItem (string sku, string itemType, string payload)
 		{
 			var buyIntentBundle = billingService.GetBuyIntent (ApiVersion, appContext.PackageName, sku, itemType, payload);

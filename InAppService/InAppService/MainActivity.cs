@@ -18,6 +18,7 @@ namespace InAppService
 		InAppBillingHelper billingHelper;
 		ConnectionSetupListener listener;
 		Spinner produtctSpinner;
+		Product _selectedProduct;
 
 		IList<Product> products;
 
@@ -60,6 +61,10 @@ namespace InAppService
 
 			produtctSpinner = FindViewById<Spinner> (Resource.Id.productSpinner);
 
+			var buyButton = FindViewById<Button> (Resource.Id.buyButton);
+			buyButton.Click += OnBuyButtonClick;
+
+
 			//Disable until we get the items
 			produtctSpinner.Enabled = false;
 			produtctSpinner.OnItemSelectedListener = this;
@@ -68,6 +73,10 @@ namespace InAppService
 
 		}
 
+		void OnBuyButtonClick (object sender, EventArgs e)
+		{
+			billingHelper.BuyItem (_selectedProduct, "none");
+		}
 
 		void CreationFinished (bool isServiceCreated)
 		{
@@ -76,12 +85,10 @@ namespace InAppService
 					billingHelper = new InAppBillingHelper (this, BillingService);
 				}
 
-
 				//Get available products
 				billingHelper.QueryInventoryAsync (new List<string> { "product1", "product2" }, ItemType.InApp)
 					.ContinueWith(GetInventory, 
 					              TaskScheduler.FromCurrentSynchronizationContext());
-
 
 			} finally {
 				listener.Dispose ();
@@ -113,7 +120,7 @@ namespace InAppService
 
 		public void OnItemSelected (AdapterView parent, Android.Views.View view, int position, long id)
 		{
-			Console.WriteLine (products[position]);
+			_selectedProduct = products [position];
 		}
 
 		public void OnNothingSelected (AdapterView parent)
