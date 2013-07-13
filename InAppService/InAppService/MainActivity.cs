@@ -5,14 +5,46 @@ using Xamarin.GoogleInAppBillig;
 using Android.Content;
 using System.Collections.Generic;
 using System;
+using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Threading;
 
 namespace InAppService
 {
 	[Activity (Label = "InAppService", MainLauncher = true)]
-	public class MainActivity : BillingActivity
+	public class MainActivity : BillingActivity, AdapterView.IOnItemSelectedListener
 	{
 		InAppBillingHelper billingHelper;
 		ConnectionSetupListener listener;
+		Spinner produtctSpinner;
+
+		IList<Product> products;
+
+
+		void GetInventory (Task<IList<string>> task)
+		{
+			if (task.Result == null) {
+				return;
+			}
+
+			foreach (var item in task.Result) {
+				var product = JsonConvert.DeserializeObject<Product> (item);
+				products.Add (product);
+				Console.WriteLine (product);
+			}
+
+			if (products.Count > 0) {
+				produtctSpinner.Enabled = true;
+			}
+
+			var items = products.Select (p => p.Title).ToList();
+
+			produtctSpinner.Adapter = new ArrayAdapter<string> (this, 
+			                                                    Android.Resource.Layout.SimpleSpinnerItem,
+			                                                    items);
+		}
+
 
 		protected override void OnCreate (Bundle bundle)
 		{
@@ -26,15 +58,16 @@ namespace InAppService
 			// Set our view from the "main" layout resource
 			SetContentView (Resource.Layout.Main);
 
-			// Get our button from the layout resource,
-			// and attach an event to it
-			Button button = FindViewById<Button> (Resource.Id.myButton);
+			produtctSpinner = FindViewById<Spinner> (Resource.Id.productSpinner);
 
-			button.Click += delegate {
-				billingHelper.QueryInventory (new List<string> { "product1", "product2" }, ItemType.InApp);
-				billingHelper.BuyItem("product1", ItemType.InApp, "payload"); 
-			};
+			//Disable until we get the items
+			produtctSpinner.Enabled = false;
+			produtctSpinner.OnItemSelectedListener = this;
+
+			products = new List<Product> ();
+
 		}
+
 
 		void CreationFinished (bool isServiceCreated)
 		{
@@ -42,6 +75,13 @@ namespace InAppService
 				if (isServiceCreated) {
 					billingHelper = new InAppBillingHelper (this, BillingService);
 				}
+
+
+				//Get available products
+				billingHelper.QueryInventoryAsync (new List<string> { "product1", "product2" }, ItemType.InApp)
+					.ContinueWith(GetInventory, 
+					              TaskScheduler.FromCurrentSynchronizationContext());
+
 
 			} finally {
 				listener.Dispose ();
@@ -69,6 +109,18 @@ namespace InAppService
 				creationFinished (isServiceCreated);
 			}
 		}
+
+
+		public void OnItemSelected (AdapterView parent, Android.Views.View view, int position, long id)
+		{
+			Console.WriteLine (products[position]);
+		}
+
+		public void OnNothingSelected (AdapterView parent)
+		{
+			//throw new NotImplementedException ();
+		}
+
 	}
 }
 

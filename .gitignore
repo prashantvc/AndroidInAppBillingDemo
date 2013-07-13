@@ -126,3 +126,4 @@ UpgradeLog*.XML
 # Maven
 log/
 target/
+*.userprefs

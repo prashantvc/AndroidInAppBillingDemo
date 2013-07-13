@@ -1,32 +1,48 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="InAppService/MainActivity.cs">
     <Files>
-      <File FileName="InAppService/MainActivity.cs" Line="31" Column="45" />
-      <File FileName="InAppService/Billing/InAppBillingHelper.cs" Line="38" Column="52" />
-      <File FileName="InAppService/Billing/Constants.cs" Line="14" Column="5" />
-      <File FileName="InAppService/Billing/Product.cs" Line="16" Column="3" />
+      <File FileName="InAppService/MainActivity.cs" Line="59" Column="4" />
+      <File FileName="InAppService/Billing/InAppBillingHelper.cs" Line="49" Column="32" />
+      <File FileName="InAppService/ProductSpinnerAdapter.cs" Line="16" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="InAppService" expanded="True">
-            <Node name="ComponentReferenceFolder" expanded="True" />
+          <Node name="InAppBillingBinding" expanded="True" />
+          <Node name="InAppService" expanded="True" selected="True">
+            <Node name="Assets" expanded="True" />
             <Node name="Billing" expanded="True" />
-            <Node name="Properties" expanded="True" />
-            <Node name="MainActivity.cs" selected="True" />
           </Node>
         </State>
+      </Pad>
+      <Pad Id="ClassPad">
+        <State expanded="True" selected="True" />
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>sender</Value>
+          <Value>args</Value>
+          <Value>args.Result</Value>
+          <Value>args.results[0]</Value>
+          <Value>args.results[0]</Value>
+          <Value>arg</Value>
+          <Value>Instance</Value>
+        </State>
+      </Pad>
+      <Pad Id="ConnectionManagerPad">
+        <State selected="True" />
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/prashantvc/Projects/InAppService/InAppService/MainActivity.cs" line="32" column="1" />
+      <Breakpoint file="/Users/prashantvc/IdeaProjects/InAppBillingLibrary/InAppService/InAppService/MainActivity.cs" line="34" column="37" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
     <Watch file="../InAppBillingDemo/InAppBillingDemo/MainActivity.cs" line="53" offsetX="683" offsetY="780" expression="m" liveUpdate="False" />
   </MonoDevelop.Ide.DebuggingService.PinnedWatches>
-  <MonoDevelop.Ide.ItemProperties.InAppService AndroidDeviceId-Release="015d43636127fa14" AndroidDeviceId-Debug="015d43636127fa14" />
+  <MonoDevelop.Ide.ItemProperties.InAppService AndroidDeviceId-Release="192.168.56.101:5555" AndroidDeviceId-Debug="015d43636127fa14" MonoForAntroid.PreferredDevice="3.7in WVGA (Nexus One)" />
 </Properties>
