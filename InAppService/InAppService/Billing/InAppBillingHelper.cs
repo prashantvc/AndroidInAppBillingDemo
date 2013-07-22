@@ -69,7 +69,7 @@ namespace InAppService
 		public void BuyItem (string sku, string itemType, string payload)
 		{
 			var buyIntentBundle = _billingService.GetBuyIntent (Constants.APIVersion, _activity.PackageName, sku, itemType, payload);
-			var pendingIntent = buyIntentBundle.GetParcelable ("BUY_INTENT") as PendingIntent;
+			var pendingIntent = buyIntentBundle.GetParcelable (Constants.BuyItem) as PendingIntent;
 			if (pendingIntent != null) {
 				_activity.StartIntentSenderForResult (pendingIntent.IntentSender, 1001, new Intent (), 0, 0, 0);
 			}
