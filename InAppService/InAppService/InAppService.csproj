@@ -28,6 +28,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    <AndroidLinkMode>None</AndroidLinkMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -53,6 +54,7 @@
     <Compile Include="Billing\InAppBillingHelper.cs" />
     <Compile Include="Billing\Product.cs" />
     <Compile Include="Billing\Constants.cs" />
+    <Compile Include="InAppBillingServiceConnection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -66,12 +68,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\InAppBillingBinding\InAppBillingBinding.csproj">
-      <Project>{1661710D-E094-405F-990F-278AEAC7E9B6}</Project>
-      <Name>InAppBillingBinding</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Billing\" />
   </ItemGroup>
   <ItemGroup>
@@ -80,5 +76,9 @@
       <Version>4.5.11</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidInterfaceDescription Include="Budle.aidl" />
+    <AndroidInterfaceDescription Include="IInAppBillingService.aidl" />
   </ItemGroup>
 </Project>

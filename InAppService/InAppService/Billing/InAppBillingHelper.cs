@@ -4,6 +4,8 @@ using Android.OS;
 using Com.Android.Vending.Billing;
 using Android.App;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System;
 
 namespace InAppService
 {
@@ -38,6 +40,25 @@ namespace InAppService
 			});
 
 			return getSkuDetailsTask;
+		}
+
+		public void QueryInventory (List<string> skuList, string itemType)
+		{
+			Bundle querySku = new Bundle ();
+			querySku.PutStringArrayList (Constants.ItemIdList, skuList);
+
+			Bundle skuDetails = billingService.GetSkuDetails (ApiVersion, appContext.PackageName, itemType, querySku);
+
+			if (skuDetails.ContainsKey (Constants.SkuDetailsList)) {
+
+				var items = skuDetails.GetStringArrayList (Constants.SkuDetailsList);
+
+				foreach (var item in items) {
+					var product = JsonConvert.DeserializeObject<Product> (item);
+					Console.WriteLine (product);
+				}
+			}
+
 		}
 
 		/// <summary>

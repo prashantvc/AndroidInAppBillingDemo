@@ -1,27 +1,23 @@
 using Android.App;
 using Android.OS;
 using Android.Widget;
-using Xamarin.GoogleInAppBillig;
 using Android.Content;
 using System.Collections.Generic;
 using System;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Linq;
-using System.Threading;
 
 namespace InAppService
 {
 	[Activity (Label = "InAppService", MainLauncher = true)]
-	public class MainActivity : BillingActivity, AdapterView.IOnItemSelectedListener
+	public class MainActivity : Activity, AdapterView.IOnItemSelectedListener
 	{
 		InAppBillingHelper billingHelper;
-		ConnectionSetupListener listener;
 		Spinner produtctSpinner;
 		Product _selectedProduct;
 
 		IList<Product> products;
-
 
 		void GetInventory (Task<IList<string>> task)
 		{
@@ -46,13 +42,12 @@ namespace InAppService
 			                                                    items);
 		}
 
+		InAppBillingServiceConnection serviceConnection;
 
 		protected override void OnCreate (Bundle bundle)
 		{
-			//This should be called before base.OnCreate
-			//find a way to handle it better
-			listener = new ConnectionSetupListener (CreationFinished);
-			SetupBillingServiceConnection (listener);
+
+			StartSetup (CreationFinished);
 
 			base.OnCreate (bundle);
 
@@ -73,16 +68,39 @@ namespace InAppService
 
 		}
 
+		protected override void OnDestroy ()
+		{
+			if (serviceConnection != null) {
+				UnbindService (serviceConnection);
+			}
+		}
+
 		void OnBuyButtonClick (object sender, EventArgs e)
 		{
 			billingHelper.BuyItem (_selectedProduct, "none");
 		}
 
+		public void StartSetup(Action<bool> setupFinished){
+
+			serviceConnection = new InAppBillingServiceConnection(this, setupFinished);
+
+			var serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
+			int count = PackageManager.QueryIntentServices(serviceIntent, 0).Count;
+			if (count != 0) {
+				BindService(serviceIntent, serviceConnection, Bind.AutoCreate);
+			}
+			else {
+				// no service available to handle that Intent
+				if (setupFinished != null) {
+					setupFinished(false); 
+				}
+			}
+		}
+
 		void CreationFinished (bool isServiceCreated)
 		{
-			try {
 				if (isServiceCreated) {
-					billingHelper = new InAppBillingHelper (this, BillingService);
+					billingHelper = new InAppBillingHelper (this, serviceConnection.Service);
 				}
 
 				//Get available products
@@ -90,33 +108,12 @@ namespace InAppService
 					.ContinueWith(GetInventory, 
 					              TaskScheduler.FromCurrentSynchronizationContext());
 
-			} finally {
-				listener.Dispose ();
-				listener = null;
-			}
 		}
 
 		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
 		{
 
 		}
-
-		class ConnectionSetupListener : Java.Lang.Object, IOnServiceCreatedListener
-		{
-
-			Action<bool> creationFinished;
-
-			public ConnectionSetupListener (Action<bool> creationFinished)
-			{
-				this.creationFinished = creationFinished;
-			}
-
-			public void OnServiceCreationFinished (bool isServiceCreated)
-			{
-				creationFinished (isServiceCreated);
-			}
-		}
-
 
 		public void OnItemSelected (AdapterView parent, Android.Views.View view, int position, long id)
 		{
