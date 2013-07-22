@@ -7,13 +7,10 @@ namespace InAppService
 {
 	public class InAppBillingServiceConnection: Java.Lang.Object, IServiceConnection
 	{
-		Action<bool> setupFinished;
-		Context context;
-
 		public InAppBillingServiceConnection (Context context, Action<bool> setupFinished)
 		{
-			this.context = context;
-			this.setupFinished = setupFinished;
+			_context = context;
+			_setupFinished = setupFinished;
 		}
 
 		public IInAppBillingService Service {
@@ -28,28 +25,23 @@ namespace InAppService
 			LogDebug ("Billing service connected.");
 			Service = IInAppBillingServiceStub.AsInterface (service);
 
-			string packageName = context.PackageName;
+			string packageName = _context.PackageName;
 
 			try {
 				LogDebug ("Checking for in-app billing V3 support");
 
-				int response = Service.IsBillingSupported (3, packageName, ItemType.InApp);
-				if (response != 0) {
-					if (setupFinished != null) 
-					{
-						setupFinished(false);
-						//setupFinished(new IabResult(response,
-						  //                          "Error checking for billing v3 support."));
-					}
+				int response = Service.IsBillingSupported (Constants.APIVersion, packageName, ItemType.InApp);
+				if (response != BillingResult.OK) {
+					SetupFinished(false);
 				}
 
 				LogDebug("In-app billing version 3 supported for " + packageName);
 
 				// check for v3 subscriptions support
-				response = Service.IsBillingSupported(3, packageName, ItemType.Subscription);
-				if (response == 0) {
+				response = Service.IsBillingSupported(Constants.APIVersion, packageName, ItemType.Subscription);
+				if (response == BillingResult.OK) {
 					LogDebug("Subscriptions AVAILABLE.");
-					setupFinished(true);
+					SetupFinished(true);
 				}
 				else {
 					LogDebug("Subscriptions NOT AVAILABLE. Response: " + response);
@@ -57,14 +49,11 @@ namespace InAppService
 
 
 			} catch (Exception ex) {
-				if (setupFinished != null) {
-					setupFinished (false);
-				}
+				LogDebug (ex.ToString());
+				SetupFinished (false);
 			}
 
-			if (setupFinished != null) {
-				setupFinished (false);
-			}
+			SetupFinished (false);
 		}
 
 		public void OnServiceDisconnected (ComponentName name)
@@ -72,15 +61,19 @@ namespace InAppService
 			Service = null;
 		}
 
+		void SetupFinished(bool isServiceCreated)
+		{
+			if (_setupFinished != null) {
+				_setupFinished (isServiceCreated);
+			}
+		}
+
 		#endregion
 
-		bool debugLog = true;
-		string Tag = "Iab Helper";
 
 		void LogDebug (String msg)
 		{
-			if (debugLog)
-				Log.Debug (Tag, msg);
+			Log.Debug (Tag, msg);
 		}
 
 		void LogError (String msg)
@@ -92,6 +85,12 @@ namespace InAppService
 		{
 			Log.Warn (Tag, "In-app billing warning: " + msg);
 		}
+
+		Action<bool> _setupFinished;
+		Context _context;
+
+		const string Tag = "Iab Helper";
+
 	}
 }
 

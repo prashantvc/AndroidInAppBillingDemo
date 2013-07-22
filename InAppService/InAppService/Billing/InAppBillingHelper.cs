@@ -4,23 +4,31 @@ using Android.OS;
 using Com.Android.Vending.Billing;
 using Android.App;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System;
 
 namespace InAppService
 {
+	/// <summary>
+	/// In app billing service helper.
+	/// </summary>
 	public class InAppBillingHelper
 	{
-		Activity appContext;
-		IInAppBillingService billingService;
-		const int ApiVersion = 3;
-
-		public InAppBillingHelper (Activity context, IInAppBillingService billingService)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="InAppService.InAppBillingHelper"/> class.
+		/// </summary>
+		/// <param name="activity">Activity.</param>
+		/// <param name="billingService">Billing service.</param>
+		public InAppBillingHelper (Activity activity, IInAppBillingService billingService)
 		{
-			this.billingService = billingService;
-			appContext = context;
+			_billingService = billingService;
+			_activity = activity;
 		}
 
+		/// <summary>
+		/// Queries the inventory asynchronously.
+		/// </summary>
+		/// <returns>List of strings</returns>
+		/// <param name="skuList">Sku list.</param>
+		/// <param name="itemType">Item type.</param>
 		public Task<IList<string>> QueryInventoryAsync (List<string> skuList, string itemType)
 		{
 
@@ -30,35 +38,16 @@ namespace InAppService
 				querySku.PutStringArrayList (Constants.ItemIdList, skuList);
 
 
-				Bundle skuDetails = billingService.GetSkuDetails (ApiVersion, appContext.PackageName, itemType, querySku);
+				Bundle skuDetails = _billingService.GetSkuDetails (Constants.APIVersion, _activity.PackageName, itemType, querySku);
 				
 				if (skuDetails.ContainsKey (Constants.SkuDetailsList)) {
 					return skuDetails.GetStringArrayList (Constants.SkuDetailsList);
 				}
+
 				return null;
-				
 			});
 
 			return getSkuDetailsTask;
-		}
-
-		public void QueryInventory (List<string> skuList, string itemType)
-		{
-			Bundle querySku = new Bundle ();
-			querySku.PutStringArrayList (Constants.ItemIdList, skuList);
-
-			Bundle skuDetails = billingService.GetSkuDetails (ApiVersion, appContext.PackageName, itemType, querySku);
-
-			if (skuDetails.ContainsKey (Constants.SkuDetailsList)) {
-
-				var items = skuDetails.GetStringArrayList (Constants.SkuDetailsList);
-
-				foreach (var item in items) {
-					var product = JsonConvert.DeserializeObject<Product> (item);
-					Console.WriteLine (product);
-				}
-			}
-
 		}
 
 		/// <summary>
@@ -79,12 +68,15 @@ namespace InAppService
 		/// <param name="payload">Payload.</param>
 		public void BuyItem (string sku, string itemType, string payload)
 		{
-			var buyIntentBundle = billingService.GetBuyIntent (ApiVersion, appContext.PackageName, sku, itemType, payload);
+			var buyIntentBundle = _billingService.GetBuyIntent (Constants.APIVersion, _activity.PackageName, sku, itemType, payload);
 			var pendingIntent = buyIntentBundle.GetParcelable ("BUY_INTENT") as PendingIntent;
 			if (pendingIntent != null) {
-				appContext.StartIntentSenderForResult (pendingIntent.IntentSender, 1001, new Intent (), 0, 0, 0);
+				_activity.StartIntentSenderForResult (pendingIntent.IntentSender, 1001, new Intent (), 0, 0, 0);
 			}
 		}
+
+		Activity _activity;
+		IInAppBillingService _billingService;
 	}
 }
 

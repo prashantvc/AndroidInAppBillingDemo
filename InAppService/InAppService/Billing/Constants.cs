@@ -33,6 +33,12 @@ namespace InAppService
 	public sealed class Constants{
 		private Constants() {}
 
+		public static int APIVersion{
+			get{
+				return 3;
+			}
+		}
+
 		public static string SkuDetailsList{
 			get{
 				return "DETAILS_LIST";
