@@ -42,6 +42,7 @@ namespace InAppService
 				if (response == BillingResult.OK) {
 					LogDebug("Subscriptions AVAILABLE.");
 					SetupFinished(true);
+					return;
 				}
 				else {
 					LogDebug("Subscriptions NOT AVAILABLE. Response: " + response);

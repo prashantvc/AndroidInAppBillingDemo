@@ -101,6 +101,7 @@ namespace InAppService
 				return;
 			}
 
+			_products.Clear ();
 			foreach (var item in task.Result) {
 				var product = JsonConvert.DeserializeObject<Product> (item);
 				_products.Add (product);
