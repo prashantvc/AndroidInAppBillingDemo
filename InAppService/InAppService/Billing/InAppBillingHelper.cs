@@ -55,9 +55,9 @@ namespace InAppService
 		/// </summary>
 		/// <param name="product">Product.</param>
 		/// <param name="payload">Payload.</param>
-		public void BuyItem(Product product, string payload)
+		public void LaunchPurchaseFlow (Product product, string payload)
 		{
-			BuyItem (product.ProductId, product.Type, payload);
+			LaunchPurchaseFlow (product.ProductId, product.Type, payload);
 		}
 
 		/// <summary>
@@ -66,17 +66,72 @@ namespace InAppService
 		/// <param name="sku">Sku.</param>
 		/// <param name="itemType">Item type.</param>
 		/// <param name="payload">Payload.</param>
-		public void BuyItem (string sku, string itemType, string payload)
+		public void LaunchPurchaseFlow (string sku, string itemType, string payload)
 		{
+
+#if DEBUG
+			var consume = _billingService.ConsumePurchase(Constants.APIVersion, _activity.PackageName, "inapp:com.xamarin.InAppService:android.test.purchased");
+			System.Console.WriteLine ("Consumed: {0}", consume);
+#endif
+
 			var buyIntentBundle = _billingService.GetBuyIntent (Constants.APIVersion, _activity.PackageName, sku, itemType, payload);
-			var pendingIntent = buyIntentBundle.GetParcelable (Constants.BuyItem) as PendingIntent;
-			if (pendingIntent != null) {
-				_activity.StartIntentSenderForResult (pendingIntent.IntentSender, 1001, new Intent (), 0, 0, 0);
+			var response = GetResponseCodeFromBundle (buyIntentBundle);
+
+			if (response != BillingResult.OK) {
+				return;
 			}
+
+			var pendingIntent = buyIntentBundle.GetParcelable (Response.BuyItem) as PendingIntent;
+			if (pendingIntent != null) {
+				_activity.StartIntentSenderForResult (pendingIntent.IntentSender, PurchaseRequestCode, new Intent (), 0, 0, 0);
+			}
+		}
+
+		public void HandleActivityResult (int requestCode, Result resultCode, Intent data)
+		{
+			if (PurchaseRequestCode != requestCode || data == null) {
+				return;
+			}
+
+			var response = GetReponseCodeFromIntent (data);
+			var purchaseData = data.GetStringExtra (Response.InAppPurchaseData);
+			var purchaseSign = data.GetStringExtra (Response.InAppPurchaseSignature);
+		}
+
+		int GetReponseCodeFromIntent (Intent intent)
+		{
+			object response = intent.Extras.Get (Response.Code);
+
+			if (response == null) {
+				//Bundle with null response code, assuming OK (known issue)
+				return BillingResult.OK;
+			}
+
+			if (response is Java.Lang.Number) {
+				return ((Java.Lang.Number)response).IntValue ();
+			}
+
+			return BillingResult.Error;
+		}
+
+		int GetResponseCodeFromBundle (Bundle bunble)
+		{
+			object response = bunble.Get (Response.Code);
+			if (response == null) {
+				//Bundle with null response code, assuming OK (known issue)
+				return BillingResult.OK;
+			}
+
+			if (response is Java.Lang.Number) {
+				return ((Java.Lang.Number)response).IntValue ();
+			}
+
+			return BillingResult.Error;
 		}
 
 		Activity _activity;
 		IInAppBillingService _billingService;
+		const int PurchaseRequestCode = 1001;
 	}
 }
 

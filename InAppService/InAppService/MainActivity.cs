@@ -47,7 +47,8 @@ namespace InAppService
 
 		void OnBuyButtonClick (object sender, EventArgs e)
 		{
-			_billingHelper.BuyItem (_selectedProduct, "none");
+			_billingHelper.LaunchPurchaseFlow ("android.test.purchased", ItemType.InApp, "None");
+			//_billingHelper.LaunchPurchaseFlow (_selectedProduct,  "none");
 		}
 
 		public void StartSetup(Action<bool> setupFinished){
@@ -82,7 +83,7 @@ namespace InAppService
 
 		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
 		{
-
+			_billingHelper.HandleActivityResult (requestCode, resultCode, data);
 		}
 
 		public void OnItemSelected (AdapterView parent, Android.Views.View view, int position, long id)

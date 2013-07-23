@@ -1,15 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="InAppService/MainActivity.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="InAppService/Billing/Constants.cs">
     <Files>
-      <File FileName="InAppService/Billing/InAppBillingHelper.cs" Line="56" Column="34" />
-      <File FileName="InAppService/MainActivity.cs" Line="93" Column="34" />
-      <File FileName="../../../GitProjects/SuperGenerousUser/SuperGenerousUser/MainActivity.cs" Line="63" Column="14" />
+      <File FileName="InAppService/Billing/Constants.cs" Line="133" Column="15" />
+      <File FileName="InAppService/Billing/InAppBillingHelper.cs" Line="72" Column="72" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="InAppService" expanded="True" selected="True">
+        <State expanded="True" selected="True">
+          <Node name="InAppService" expanded="True">
             <Node name="Billing" expanded="True" />
           </Node>
         </State>
@@ -37,10 +36,11 @@
     <BreakpointStore>
       <Breakpoint file="/Users/prashantvc/Projects/InAppService/InAppService/MainActivity.cs" line="32" column="1" />
       <Breakpoint file="/Users/prashantvc/GitProjects/SuperGenerousUser/SuperGenerousUser/InAppBillingServiceConnection.cs" line="27" column="1" />
+      <Breakpoint file="/Users/prashantvc/IdeaProjects/InAppBillingLibrary/InAppService/InAppService/MainActivity.cs" line="71" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
     <Watch file="../InAppBillingDemo/InAppBillingDemo/MainActivity.cs" line="53" offsetX="683" offsetY="780" expression="m" liveUpdate="False" />
   </MonoDevelop.Ide.DebuggingService.PinnedWatches>
-  <MonoDevelop.Ide.ItemProperties.InAppService AndroidDeviceId-Release="192.168.56.101:5555" AndroidDeviceId-Debug="192.168.56.101:5555" MonoForAntroid.PreferredDevice="3.7in WVGA (Nexus One)" />
+  <MonoDevelop.Ide.ItemProperties.InAppService AndroidDeviceId-Release="192.168.56.101:5555" AndroidDeviceId-Debug="015d43636127fa14" MonoForAntroid.PreferredDevice="3.7in WVGA (Nexus One)" />
 </Properties>
