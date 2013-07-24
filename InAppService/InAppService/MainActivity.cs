@@ -47,7 +47,7 @@ namespace InAppService
 
 		void OnBuyButtonClick (object sender, EventArgs e)
 		{
-			_billingHelper.LaunchPurchaseFlow ("android.test.purchased", ItemType.InApp, "None");
+			_billingHelper.LaunchPurchaseFlow ("android.test.purchased", ItemType.InApp, Guid.NewGuid().ToString());
 			//_billingHelper.LaunchPurchaseFlow (_selectedProduct,  "none");
 		}
 
@@ -78,6 +78,8 @@ namespace InAppService
 			_billingHelper.QueryInventoryAsync (new List<string> { "product1", "product2" }, ItemType.InApp)
 				.ContinueWith(GetInventory, 
 				              TaskScheduler.FromCurrentSynchronizationContext());
+
+			_billingHelper.GetPurchases(ItemType.InApp);
 
 		}
 

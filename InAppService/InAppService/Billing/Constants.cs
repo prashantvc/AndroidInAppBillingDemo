@@ -150,7 +150,7 @@ namespace InAppService
 			}
 		}
 
-		public static string BuyItem {
+		public static string BuyIntent {
 			get {
 				return "BUY_INTENT";
 			}
@@ -162,9 +162,27 @@ namespace InAppService
 			}
 		}
 
-		public static string InAppPurchaseSignature {
+		public static string InAppDataSignature {
 			get {
 				return "INAPP_DATA_SIGNATURE";
+			}
+		}
+
+		public static string InAppPurchaseItemList {
+			get {
+				return "INAPP_PURCHASE_ITEM_LIST";
+			}
+		}
+
+		public static string InAppPurchaseDataList {
+			get {
+				return "INAPP_PURCHASE_DATA_LIST";
+			}
+		}
+
+		public static string InAppContinuationToken {
+			get {
+				return "INAPP_CONTINUATION_TOKEN";
 			}
 		}
 	}

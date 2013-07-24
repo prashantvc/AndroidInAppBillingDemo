@@ -4,6 +4,7 @@ using Android.OS;
 using Com.Android.Vending.Billing;
 using Android.App;
 using System.Threading.Tasks;
+using System;
 
 namespace InAppService
 {
@@ -55,9 +56,10 @@ namespace InAppService
 		/// </summary>
 		/// <param name="product">Product.</param>
 		/// <param name="payload">Payload.</param>
-		public void LaunchPurchaseFlow (Product product, string payload)
+		public void LaunchPurchaseFlow (Product product)
 		{
-			LaunchPurchaseFlow (product.ProductId, product.Type, payload);
+			_payload = Guid.NewGuid ().ToString ();
+			LaunchPurchaseFlow (product.ProductId, product.Type, _payload);
 		}
 
 		/// <summary>
@@ -69,10 +71,10 @@ namespace InAppService
 		public void LaunchPurchaseFlow (string sku, string itemType, string payload)
 		{
 
-#if DEBUG
-			var consume = _billingService.ConsumePurchase(Constants.APIVersion, _activity.PackageName, "inapp:com.xamarin.InAppService:android.test.purchased");
-			System.Console.WriteLine ("Consumed: {0}", consume);
-#endif
+//#if DEBUG
+//			var consume = _billingService.ConsumePurchase(Constants.APIVersion, _activity.PackageName, "inapp:com.xamarin.InAppService:android.test.purchased");
+//			Console.WriteLine ("Consumed: {0}", consume);
+//#endif
 
 			var buyIntentBundle = _billingService.GetBuyIntent (Constants.APIVersion, _activity.PackageName, sku, itemType, payload);
 			var response = GetResponseCodeFromBundle (buyIntentBundle);
@@ -81,10 +83,26 @@ namespace InAppService
 				return;
 			}
 
-			var pendingIntent = buyIntentBundle.GetParcelable (Response.BuyItem) as PendingIntent;
+			var pendingIntent = buyIntentBundle.GetParcelable (Response.BuyIntent) as PendingIntent;
 			if (pendingIntent != null) {
 				_activity.StartIntentSenderForResult (pendingIntent.IntentSender, PurchaseRequestCode, new Intent (), 0, 0, 0);
 			}
+		}
+
+		public void GetPurchases (string itemType)
+		{
+			Bundle ownedItems = _billingService.GetPurchases (Constants.APIVersion, _activity.PackageName, itemType, null);
+			var response = GetResponseCodeFromBundle (ownedItems);
+
+			if (response != BillingResult.OK) {
+				return;
+			}
+
+			var list = ownedItems.GetStringArrayList (Response.InAppPurchaseItemList);
+			var data = ownedItems.GetStringArrayList (Response.InAppPurchaseDataList);
+			Console.WriteLine (list);
+
+			//TODO: Get more products if continuation token is not null
 		}
 
 		public void HandleActivityResult (int requestCode, Result resultCode, Intent data)
@@ -95,7 +113,7 @@ namespace InAppService
 
 			var response = GetReponseCodeFromIntent (data);
 			var purchaseData = data.GetStringExtra (Response.InAppPurchaseData);
-			var purchaseSign = data.GetStringExtra (Response.InAppPurchaseSignature);
+			var purchaseSign = data.GetStringExtra (Response.InAppDataSignature);
 		}
 
 		int GetReponseCodeFromIntent (Intent intent)
@@ -130,8 +148,10 @@ namespace InAppService
 		}
 
 		Activity _activity;
+		string _payload;
 		IInAppBillingService _billingService;
 		const int PurchaseRequestCode = 1001;
+
 	}
 }
 

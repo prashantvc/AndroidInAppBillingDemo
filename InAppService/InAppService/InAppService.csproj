@@ -51,7 +51,9 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Billing\InAppBillingHelper.cs" />
+    <Compile Include="Billing\InAppBillingHelper.cs">
+      <DependentUpon>Constants.cs</DependentUpon>
+    </Compile>
     <Compile Include="Billing\Product.cs" />
     <Compile Include="Billing\Constants.cs" />
     <Compile Include="InAppBillingServiceConnection.cs" />
