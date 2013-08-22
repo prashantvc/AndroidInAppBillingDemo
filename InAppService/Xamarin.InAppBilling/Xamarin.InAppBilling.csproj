@@ -63,9 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\Product.cs" />
-    <Compile Include="Utilities\Constants.cs" />
     <Compile Include="Billing\InAppBillingHelper.cs" />
     <Compile Include="Billing\InAppBillingServiceConnection.cs" />
     <Compile Include="Billing\IInAppBillingHelper.cs" />
+    <Compile Include="Utilities\BillingConstants.cs" />
   </ItemGroup>
 </Project>

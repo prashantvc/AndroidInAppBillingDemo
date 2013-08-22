@@ -14,7 +14,7 @@ using Xamarin.InAppBilling;
 namespace InAppService
 {
 	[Activity (Label = "InAppService", MainLauncher = true)]
-	public class MainActivity : Activity, AdapterView.IOnItemSelectedListener, IBillingActivity
+	public class MainActivity : Activity, AdapterView.IOnItemSelectedListener
 	{
 
 		protected override void OnCreate (Bundle bundle)
@@ -49,13 +49,14 @@ namespace InAppService
 
 		void OnBuyButtonClick (object sender, EventArgs e)
 		{
-			_billingHelper.LaunchPurchaseFlow ("android.test.purchased", ItemType.InApp, Guid.NewGuid().ToString());
+			//_billingHelper.LaunchPurchaseFlow ("android.test.purchased", ItemType.InApp, Guid.NewGuid().ToString());
 			//_billingHelper.LaunchPurchaseFlow (_selectedProduct,  "none");
 		}
 
-		public void StartSetup(){
+		public void StartSetup ()
+		{
 
-			_serviceConnection = new InAppBillingServiceConnection(this);
+			_serviceConnection = new InAppBillingServiceConnection (this);
 			_serviceConnection.OnConnected += HandleOnConnected; 
 
 			_serviceConnection.Connect ();
@@ -63,27 +64,38 @@ namespace InAppService
 
 		void HandleOnConnected (object sender, EventArgs e)
 		{
-			//TODO: Implement it later
+			_billingHelper = _serviceConnection.BillingHelper;
+		
+			GetInventory ();
 		}
 
-		void SetupFinished (bool isServiceCreated)
+		async Task GetInventory ()
 		{
-			if (isServiceCreated) {
-				_billingHelper = new InAppBillingHelper (this, _serviceConnection.Service);
+			//Get available products
+			_products = await _billingHelper.QueryInventoryAsync (new List<string> {
+				"product1",
+				"product2",
+				"android.test.purchased"
+			}, ItemType.InApp);
+
+			if (_products == null) {
+				return;
 			}
 
-			//Get available products
-			_billingHelper.QueryInventoryAsync (new List<string> { "product1", "product2", "android.test.purchased" }, ItemType.InApp)
-				.ContinueWith(GetInventory, 
-				              TaskScheduler.FromCurrentSynchronizationContext());
+			_produtctSpinner.Enabled = (_products.Count > 0);
 
-			_billingHelper.GetPurchases(ItemType.InApp);
+			var items = _products.Select (p => p.Title).ToList ();
+
+			_produtctSpinner.Adapter = new ArrayAdapter<string> (this, 
+			                                                     Android.Resource.Layout.SimpleSpinnerItem,
+			                                                     items);
+
 
 		}
 
 		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
 		{
-			_billingHelper.HandleActivityResult (requestCode, resultCode, data);
+			//_billingHelper.HandleActivityResult (requestCode, resultCode, data);
 		}
 
 		public void OnItemSelected (AdapterView parent, Android.Views.View view, int position, long id)
@@ -96,37 +108,11 @@ namespace InAppService
 			//throw new NotImplementedException ();
 		}
 
-		void GetInventory (Task<IList<string>> task)
-		{
-			if (task.Result == null) {
-				return;
-			}
-
-			_products.Clear ();
-			foreach (var item in task.Result) {
-				var product = JsonConvert.DeserializeObject<Product> (item);
-				_products.Add (product);
-				Console.WriteLine (product);
-			}
-
-			if (_products.Count > 0) {
-				_produtctSpinner.Enabled = true;
-			}
-
-			var items = _products.Select (p => p.Title).ToList();
-
-			_produtctSpinner.Adapter = new ArrayAdapter<string> (this, 
-			                                                    Android.Resource.Layout.SimpleSpinnerItem,
-			                                                    items);
-		}
-
-		
-		InAppBillingHelper _billingHelper;
+		IInAppBillingHelper _billingHelper;
 		Spinner _produtctSpinner;
 		Product _selectedProduct;
 		IList<Product> _products;
 		InAppBillingServiceConnection _serviceConnection;
-
 	}
 }
 

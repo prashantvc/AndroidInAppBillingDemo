@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System;
 using Xamarin.InAppBilling.Utilities;
 using Xamarin.InAppBilling.Model;
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace Xamarin.InAppBilling
 {
@@ -26,28 +28,24 @@ namespace Xamarin.InAppBilling
 			_activity = activity;
 		}
 
-		/// <summary>
-		/// Queries the inventory asynchronously.
-		/// </summary>
-		/// <returns>List of strings</returns>
-		/// <param name="skuList">Sku list.</param>
-		/// <param name="itemType">Item type.</param>
-		public Task<IList<string>> QueryInventoryAsync (List<string> skuList, string itemType)
+		public Task<IList<Product>> QueryInventoryAsync (IList<string> skuList, string itemType)
 		{
-
-			var getSkuDetailsTask = Task.Factory.StartNew<IList<string>> (() => {
+			var getSkuDetailsTask = Task.Factory.StartNew<IList<Product>> (() => {
 
 				Bundle querySku = new Bundle ();
-				querySku.PutStringArrayList (Constants.ItemIdList, skuList);
+				querySku.PutStringArrayList (Billing.ItemIdList, skuList);
 
 
-				Bundle skuDetails = _billingService.GetSkuDetails (Constants.APIVersion, _activity.PackageName, itemType, querySku);
+				Bundle skuDetails = _billingService.GetSkuDetails (Billing.APIVersion, _activity.PackageName, itemType, querySku);
 				
-				if (skuDetails.ContainsKey (Constants.SkuDetailsList)) {
-					return skuDetails.GetStringArrayList (Constants.SkuDetailsList);
+				if (!skuDetails.ContainsKey (Billing.SkuDetailsList)) {
+					return null;
 				}
+					 
+				var products = skuDetails.GetStringArrayList (Billing.SkuDetailsList);
 
-				return null;
+				return (products == null) ? null
+					:products.Select (JsonConvert.DeserializeObject<Product>).ToList ();
 			});
 
 			return getSkuDetailsTask;
@@ -78,7 +76,7 @@ namespace Xamarin.InAppBilling
 //			Console.WriteLine ("Consumed: {0}", consume);
 //#endif
 
-			var buyIntentBundle = _billingService.GetBuyIntent (Constants.APIVersion, _activity.PackageName, sku, itemType, payload);
+			var buyIntentBundle = _billingService.GetBuyIntent (Billing.APIVersion, _activity.PackageName, sku, itemType, payload);
 			var response = GetResponseCodeFromBundle (buyIntentBundle);
 
 			if (response != BillingResult.OK) {
@@ -93,7 +91,7 @@ namespace Xamarin.InAppBilling
 
 		public void GetPurchases (string itemType)
 		{
-			Bundle ownedItems = _billingService.GetPurchases (Constants.APIVersion, _activity.PackageName, itemType, null);
+			Bundle ownedItems = _billingService.GetPurchases (Billing.APIVersion, _activity.PackageName, itemType, null);
 			var response = GetResponseCodeFromBundle (ownedItems);
 
 			if (response != BillingResult.OK) {
@@ -147,7 +145,6 @@ namespace Xamarin.InAppBilling
 		string _payload;
 		IInAppBillingService _billingService;
 		const int PurchaseRequestCode = 1001;
-
 	}
 }
 

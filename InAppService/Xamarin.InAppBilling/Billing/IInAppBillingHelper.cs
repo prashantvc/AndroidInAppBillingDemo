@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Xamarin.InAppBilling.Model;
 
 namespace Xamarin.InAppBilling
 {
@@ -12,7 +13,7 @@ namespace Xamarin.InAppBilling
 		/// <returns>List of strings</returns>
 		/// <param name="skuList">Sku list.</param>
 		/// <param name="itemType">Item type.</param>
-		Task<IList<string>> QueryInventoryAsync (List<string> skuList, string itemType);
+		Task<IList<Product>> QueryInventoryAsync (IList<string> skuList, string itemType);
 	}
 }
 

@@ -3,7 +3,7 @@ namespace Xamarin.InAppBilling.Utilities
 {
 	public sealed class BillingResult
 	{
-		private BillingResult ()
+		BillingResult ()
 		{
 			
 		}
@@ -116,9 +116,9 @@ namespace Xamarin.InAppBilling.Utilities
 		}
 	}
 
-	public sealed class Constants
+	public sealed class Billing
 	{
-		private Constants ()
+		Billing ()
 		{
 		}
 

@@ -1,7 +1,7 @@
 
 namespace Xamarin.InAppBilling.Model
 {
-	public class Product
+	public sealed class Product
 	{
 		public string Title { get; set; }
 		public string Price { get; set; }

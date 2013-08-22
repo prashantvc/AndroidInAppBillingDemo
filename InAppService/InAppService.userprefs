@@ -1,21 +1,20 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Xamarin.InAppBilling/Billing/InAppBillingServiceConnection.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Xamarin.InAppBilling/Billing/InAppBillingHelper.cs">
     <Files>
-      <File FileName="Xamarin.InAppBilling/Billing/InAppBillingServiceConnection.cs" Line="19" Column="5" />
-      <File FileName="../../../GitProjects/play.billing.v3/play.billing.v3/BillingService.cs" Line="29" Column="23" />
-      <File FileName="InAppService/MainActivity.cs" Line="67" Column="4" />
-      <File FileName="../../../GitProjects/play.billing.v3/PlayBillingSample/Activity1.cs" Line="51" Column="22" />
-      <File FileName="Xamarin.InAppBilling/Billing/InAppBillingHelper.cs" Line="93" Column="3" />
-      <File FileName="Xamarin.InAppBilling/Billing/IInAppBillingHelper.cs" Line="19" Column="1" />
+      <File FileName="Xamarin.InAppBilling/Billing/InAppBillingServiceConnection.cs" Line="97" Column="62" />
+      <File FileName="Xamarin.InAppBilling/Model/Product.cs" Line="5" Column="3" />
+      <File FileName="Xamarin.InAppBilling/Billing/IInAppBillingHelper.cs" Line="7" Column="38" />
+      <File FileName="Xamarin.InAppBilling/Billing/InAppBillingHelper.cs" Line="56" Column="7" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="InAppService" expanded="True" />
           <Node name="Xamarin.InAppBilling" expanded="True">
+            <Node name="References" expanded="True" />
             <Node name="Billing" expanded="True">
-              <Node name="InAppBillingServiceConnection.cs" selected="True" />
+              <Node name="InAppBillingHelper.cs" selected="True" />
             </Node>
             <Node name="Model" expanded="True" />
             <Node name="Utilities" expanded="True" />

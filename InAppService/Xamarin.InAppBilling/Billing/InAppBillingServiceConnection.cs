@@ -19,7 +19,7 @@ namespace Xamarin.InAppBilling
 			private set;
 		}
 
-		public IInAppBillingHelper Helper {
+		public IInAppBillingHelper BillingHelper {
 			get;
 			private set;
 		}
@@ -48,7 +48,7 @@ namespace Xamarin.InAppBilling
 			try {
 				LogDebug ("Checking for in-app billing V3 support");
 
-				int response = Service.IsBillingSupported (Constants.APIVersion, packageName, ItemType.InApp);
+				int response = Service.IsBillingSupported (Billing.APIVersion, packageName, ItemType.InApp);
 				if (response != BillingResult.OK) {
 					Connected = false;
 				}
@@ -56,7 +56,7 @@ namespace Xamarin.InAppBilling
 				LogDebug ("In-app billing version 3 supported for " + packageName);
 
 				// check for v3 subscriptions support
-				response = Service.IsBillingSupported (Constants.APIVersion, packageName, ItemType.Subscription);
+				response = Service.IsBillingSupported (Billing.APIVersion, packageName, ItemType.Subscription);
 				if (response == BillingResult.OK) {
 					LogDebug ("Subscriptions AVAILABLE.");
 					Connected = true;
@@ -78,7 +78,7 @@ namespace Xamarin.InAppBilling
 		{
 			Connected = false;
 			Service = null;
-			Helper = null;
+			BillingHelper = null;
 
 			RaiseOnDisconnected ();
 		}
@@ -94,7 +94,7 @@ namespace Xamarin.InAppBilling
 				return;
 			}
 
-			Helper = new InAppBillingHelper (_activity, this);
+			BillingHelper = new InAppBillingHelper (_activity, Service);
 
 			var handler = OnConnected;
 			if (handler != null) {
