@@ -1,6 +1,5 @@
-using System;
 
-namespace InAppService
+namespace Xamarin.InAppBilling.Utilities
 {
 	public sealed class BillingResult
 	{

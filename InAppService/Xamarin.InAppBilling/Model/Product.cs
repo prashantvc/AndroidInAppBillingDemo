@@ -1,5 +1,5 @@
 
-namespace InAppService
+namespace Xamarin.InAppBilling.Model
 {
 	public class Product
 	{

@@ -7,17 +7,19 @@ using System;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Linq;
+using Xamarin.InAppBilling.Model;
+using Xamarin.InAppBilling.Utilities;
+using Xamarin.InAppBilling;
 
 namespace InAppService
 {
 	[Activity (Label = "InAppService", MainLauncher = true)]
-	public class MainActivity : Activity, AdapterView.IOnItemSelectedListener
+	public class MainActivity : Activity, AdapterView.IOnItemSelectedListener, IBillingActivity
 	{
 
 		protected override void OnCreate (Bundle bundle)
 		{
-
-			StartSetup (SetupFinished);
+			StartSetup ();
 
 			base.OnCreate (bundle);
 
@@ -41,7 +43,7 @@ namespace InAppService
 		protected override void OnDestroy ()
 		{
 			if (_serviceConnection != null) {
-				UnbindService (_serviceConnection);
+				_serviceConnection.Disconnected ();
 			}
 		}
 
@@ -51,21 +53,17 @@ namespace InAppService
 			//_billingHelper.LaunchPurchaseFlow (_selectedProduct,  "none");
 		}
 
-		public void StartSetup(Action<bool> setupFinished){
+		public void StartSetup(){
 
-			_serviceConnection = new InAppBillingServiceConnection(this, setupFinished);
+			_serviceConnection = new InAppBillingServiceConnection(this);
+			_serviceConnection.OnConnected += HandleOnConnected; 
 
-			var serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
-			int count = PackageManager.QueryIntentServices(serviceIntent, 0).Count;
-			if (count != 0) {
-				BindService(serviceIntent, _serviceConnection, Bind.AutoCreate);
-			}
-			else {
-				// no service available to handle that Intent
-				if (setupFinished != null) {
-					setupFinished(false); 
-				}
-			}
+			_serviceConnection.Connect ();
+		}
+
+		void HandleOnConnected (object sender, EventArgs e)
+		{
+			//TODO: Implement it later
 		}
 
 		void SetupFinished (bool isServiceCreated)
@@ -75,7 +73,7 @@ namespace InAppService
 			}
 
 			//Get available products
-			_billingHelper.QueryInventoryAsync (new List<string> { "product1", "product2" }, ItemType.InApp)
+			_billingHelper.QueryInventoryAsync (new List<string> { "product1", "product2", "android.test.purchased" }, ItemType.InApp)
 				.ContinueWith(GetInventory, 
 				              TaskScheduler.FromCurrentSynchronizationContext());
 
