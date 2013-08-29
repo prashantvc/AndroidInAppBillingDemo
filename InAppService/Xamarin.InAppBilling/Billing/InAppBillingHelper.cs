@@ -22,10 +22,11 @@ namespace Xamarin.InAppBilling
 		/// </summary>
 		/// <param name="activity">Activity.</param>
 		/// <param name="billingService">Billing service.</param>
-		public InAppBillingHelper (Activity activity, IInAppBillingService billingService)
+		public InAppBillingHelper (Activity activity, IInAppBillingService billingService, string publicKey)
 		{
 			_billingService = billingService;
 			_activity = activity;
+			_publicKey = publicKey;
 		}
 
 		public Task<IList<Product>> QueryInventoryAsync (IList<string> skuList, string itemType)
@@ -45,39 +46,28 @@ namespace Xamarin.InAppBilling
 				var products = skuDetails.GetStringArrayList (Billing.SkuDetailsList);
 
 				return (products == null) ? null
-					:products.Select (JsonConvert.DeserializeObject<Product>).ToList ();
+					: products.Select (JsonConvert.DeserializeObject<Product>).ToList ();
 			});
 
 			return getSkuDetailsTask;
 		}
 
-		/// <summary>
-		/// Buys an items
-		/// </summary>
-		/// <param name="product">Product.</param>
-		/// <param name="payload">Payload.</param>
 		public void LaunchPurchaseFlow (Product product)
 		{
 			_payload = Guid.NewGuid ().ToString ();
 			LaunchPurchaseFlow (product.ProductId, product.Type, _payload);
 		}
 
-		/// <summary>
-		/// Buys an item.
-		/// </summary>
-		/// <param name="sku">Sku.</param>
-		/// <param name="itemType">Item type.</param>
-		/// <param name="payload">Payload.</param>
 		public void LaunchPurchaseFlow (string sku, string itemType, string payload)
 		{
 
-//#if DEBUG
-//			var consume = _billingService.ConsumePurchase(Constants.APIVersion, _activity.PackageName, "inapp:com.xamarin.InAppService:android.test.purchased");
-//			Console.WriteLine ("Consumed: {0}", consume);
-//#endif
+#if DEBUG
+			var consume = _billingService.ConsumePurchase (Billing.APIVersion, _activity.PackageName, "inapp:com.xamarin.InAppService:android.test.purchased");
+			Console.WriteLine ("Consumed: {0}", consume);
+#endif
 
-			var buyIntentBundle = _billingService.GetBuyIntent (Billing.APIVersion, _activity.PackageName, sku, itemType, payload);
-			var response = GetResponseCodeFromBundle (buyIntentBundle);
+			Bundle buyIntentBundle = _billingService.GetBuyIntent (Billing.APIVersion, _activity.PackageName, sku, itemType, payload);
+			var response = buyIntentBundle.GetResponseCodeFromBundle ();
 
 			if (response != BillingResult.OK) {
 				return;
@@ -89,20 +79,55 @@ namespace Xamarin.InAppBilling
 			}
 		}
 
-		public void GetPurchases (string itemType)
+		public IList<Purchase> GetPurchases (string itemType)
 		{
-			Bundle ownedItems = _billingService.GetPurchases (Billing.APIVersion, _activity.PackageName, itemType, null);
-			var response = GetResponseCodeFromBundle (ownedItems);
+			string continuationToken = string.Empty;
+			var purchases = new List<Purchase> ();
 
-			if (response != BillingResult.OK) {
-				return;
-			}
+			do {
 
-			var list = ownedItems.GetStringArrayList (Response.InAppPurchaseItemList);
-			var data = ownedItems.GetStringArrayList (Response.InAppPurchaseDataList);
-			Console.WriteLine (list);
+				Logger.Debug ("ContinuationTocken {0}", continuationToken);
 
-			//TODO: Get more products if continuation token is not null
+				Bundle ownedItems = _billingService.GetPurchases (Billing.APIVersion, _activity.PackageName, itemType, null);
+				var response = ownedItems.GetResponseCodeFromBundle ();
+
+				if (response != BillingResult.OK) {
+					break;
+				}
+
+				if (!ValidOwnedItems (ownedItems)) {
+					Logger.Debug("Invalid purchases");
+					return purchases;
+				}
+
+				var items = ownedItems.GetStringArrayList (Response.InAppPurchaseItemList);
+				var dataList = ownedItems.GetStringArrayList (Response.InAppPurchaseDataList);
+				var signatures = ownedItems.GetStringArrayList (Response.InAppDataSignatureList);
+
+				for (int i = 0; i < items.Count; i++) {
+					string data = dataList [i];
+					string sign = signatures [i];
+				
+					if (Security.VerifyPurchase (_publicKey, data, sign)) {
+						var purchase = JsonConvert.DeserializeObject<Purchase> (data);
+						purchases.Add (purchase);
+					}
+				}
+
+				continuationToken = ownedItems.GetString (Response.InAppContinuationToken);
+
+				Console.WriteLine (items);
+
+			} while(!string.IsNullOrWhiteSpace(continuationToken));
+
+			return purchases;
+		}
+
+		static bool ValidOwnedItems (Bundle purchased)
+		{
+			return	purchased.ContainsKey (Response.InAppPurchaseItemList)
+				&& purchased.ContainsKey (Response.InAppPurchaseDataList)
+				&& purchased.ContainsKey (Response.InAppDataSignatureList);
 		}
 
 		public void HandleActivityResult (int requestCode, Result resultCode, Intent data)
@@ -110,41 +135,17 @@ namespace Xamarin.InAppBilling
 			if (PurchaseRequestCode != requestCode || data == null) {
 				return;
 			}
-			var response = GetReponseCodeFromIntent (data);
-			var purchaseData = data.GetStringExtra (Response.InAppPurchaseData);
-			var purchaseSign = data.GetStringExtra (Response.InAppDataSignature);
-		}
 
-		static int GetReponseCodeFromIntent (Intent intent)
-		{
-			object response = intent.Extras.Get (Response.Code);
-			if (response == null) {
-				//Bundle with null response code, assuming OK (known issue)
-				return BillingResult.OK;
-			}
-			if (response is Java.Lang.Number) {
-				return ((Java.Lang.Number)response).IntValue ();
-			}
-			return BillingResult.Error;
-		}
-
-		static int GetResponseCodeFromBundle (Bundle bunble)
-		{
-			object response = bunble.Get (Response.Code);
-			if (response == null) {
-				//Bundle with null response code, assuming OK (known issue)
-				return BillingResult.OK;
-			}
-			if (response is Java.Lang.Number) {
-				return ((Java.Lang.Number)response).IntValue ();
-			}
-			return BillingResult.Error;
+			int response = data.GetReponseCodeFromIntent ();
+			string purchaseData = data.GetStringExtra (Response.InAppPurchaseData);
+			string purchaseSign = data.GetStringExtra (Response.InAppDataSignature);
 		}
 
 		Activity _activity;
 		string _payload;
 		IInAppBillingService _billingService;
 		const int PurchaseRequestCode = 1001;
+		readonly string _publicKey;
 	}
 }
 

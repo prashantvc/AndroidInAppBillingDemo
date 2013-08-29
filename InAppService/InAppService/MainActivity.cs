@@ -4,7 +4,6 @@ using Android.Widget;
 using Android.Content;
 using System.Collections.Generic;
 using System;
-using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Linq;
 using Xamarin.InAppBilling.Model;
@@ -16,7 +15,6 @@ namespace InAppService
 	[Activity (Label = "InAppService", MainLauncher = true)]
 	public class MainActivity : Activity, AdapterView.IOnItemSelectedListener
 	{
-
 		protected override void OnCreate (Bundle bundle)
 		{
 			StartSetup ();
@@ -50,13 +48,12 @@ namespace InAppService
 		void OnBuyButtonClick (object sender, EventArgs e)
 		{
 			//_billingHelper.LaunchPurchaseFlow ("android.test.purchased", ItemType.InApp, Guid.NewGuid().ToString());
-			//_billingHelper.LaunchPurchaseFlow (_selectedProduct,  "none");
+			_billingHelper.LaunchPurchaseFlow (_selectedProduct);
 		}
 
 		public void StartSetup ()
 		{
-
-			_serviceConnection = new InAppBillingServiceConnection (this);
+			_serviceConnection = new InAppBillingServiceConnection (this, string.Empty);
 			_serviceConnection.OnConnected += HandleOnConnected; 
 
 			_serviceConnection.Connect ();
@@ -65,7 +62,6 @@ namespace InAppService
 		void HandleOnConnected (object sender, EventArgs e)
 		{
 			_billingHelper = _serviceConnection.BillingHelper;
-		
 			GetInventory ();
 		}
 
@@ -86,16 +82,15 @@ namespace InAppService
 
 			var items = _products.Select (p => p.Title).ToList ();
 
-			_produtctSpinner.Adapter = new ArrayAdapter<string> (this, 
-			                                                     Android.Resource.Layout.SimpleSpinnerItem,
-			                                                     items);
-
-
+			_produtctSpinner.Adapter = 
+				new ArrayAdapter<string> (this, 
+			                           Android.Resource.Layout.SimpleSpinnerItem,
+			                           items);
 		}
 
 		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
 		{
-			//_billingHelper.HandleActivityResult (requestCode, resultCode, data);
+			_billingHelper.HandleActivityResult (requestCode, resultCode, data);
 		}
 
 		public void OnItemSelected (AdapterView parent, Android.Views.View view, int position, long id)

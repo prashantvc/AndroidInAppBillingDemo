@@ -1,12 +1,13 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Xamarin.InAppBilling.Model;
+using Android.Content;
+using Android.App;
 
 namespace Xamarin.InAppBilling
 {
 	public interface IInAppBillingHelper
 	{
-		
 		/// <summary>
 		/// Queries the inventory asynchronously.
 		/// </summary>
@@ -14,6 +15,36 @@ namespace Xamarin.InAppBilling
 		/// <param name="skuList">Sku list.</param>
 		/// <param name="itemType">Item type.</param>
 		Task<IList<Product>> QueryInventoryAsync (IList<string> skuList, string itemType);
+
+		/// <summary>
+		/// Buys an item.
+		/// </summary>
+		/// <param name="sku">Sku.</param>
+		/// <param name="itemType">Item type.</param>
+		/// <param name="payload">Payload.</param>
+		void LaunchPurchaseFlow (string sku, string itemType, string payload);
+
+		/// <summary>
+		/// Buys an items
+		/// </summary>
+		/// <param name="product">Product.</param>
+		/// <param name="payload">Payload.</param>
+		void LaunchPurchaseFlow (Product product);
+
+		/// <summary>
+		/// Handles the activity result.
+		/// </summary>
+		/// <param name="requestCode">Request code.</param>
+		/// <param name="resultCode">Result code.</param>
+		/// <param name="data">Data.</param>
+		void HandleActivityResult (int requestCode, Result resultCode, Intent data);
+
+		/// <summary>
+		/// Gets the purchases.
+		/// </summary>
+		/// <returns>The purchases.</returns>
+		/// <param name="itemType">Item type (inapp or subs)</param>
+		IList<Purchase> GetPurchases (string itemType);
 	}
 }
 

@@ -67,5 +67,9 @@
     <Compile Include="Billing\InAppBillingServiceConnection.cs" />
     <Compile Include="Billing\IInAppBillingHelper.cs" />
     <Compile Include="Utilities\BillingConstants.cs" />
+    <Compile Include="Utilities\Logger.cs" />
+    <Compile Include="Billing\Security.cs" />
+    <Compile Include="Model\Purchase.cs" />
+    <Compile Include="Utilities\Extensions.cs" />
   </ItemGroup>
 </Project>

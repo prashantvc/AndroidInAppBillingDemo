@@ -1,6 +1,9 @@
 
 namespace Xamarin.InAppBilling.Model
 {
+	/// <summary>
+	/// Product model
+	/// </summary>
 	public sealed class Product
 	{
 		public string Title { get; set; }
@@ -14,5 +17,6 @@ namespace Xamarin.InAppBilling.Model
 			return string.Format ("[Product: Title={0}, Price={1}, Type={2}, Description={3}, ProductId={4}]", Title, Price, Type, Description, ProductId);
 		}
 	}
+
 }
 

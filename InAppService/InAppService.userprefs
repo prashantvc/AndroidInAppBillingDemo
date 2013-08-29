@@ -1,23 +1,15 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Xamarin.InAppBilling/Billing/InAppBillingHelper.cs">
-    <Files>
-      <File FileName="Xamarin.InAppBilling/Billing/InAppBillingServiceConnection.cs" Line="97" Column="62" />
-      <File FileName="Xamarin.InAppBilling/Model/Product.cs" Line="5" Column="3" />
-      <File FileName="Xamarin.InAppBilling/Billing/IInAppBillingHelper.cs" Line="7" Column="38" />
-      <File FileName="Xamarin.InAppBilling/Billing/InAppBillingHelper.cs" Line="56" Column="7" />
-    </Files>
+  <MonoDevelop.Ide.Workbench>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="InAppService" expanded="True" />
+        <State expanded="True" selected="True">
+          <Node name="InAppService" expanded="True">
+            <Node name="Resources" expanded="True" />
+          </Node>
           <Node name="Xamarin.InAppBilling" expanded="True">
-            <Node name="References" expanded="True" />
-            <Node name="Billing" expanded="True">
-              <Node name="InAppBillingHelper.cs" selected="True" />
-            </Node>
+            <Node name="Billing" expanded="True" />
             <Node name="Model" expanded="True" />
-            <Node name="Utilities" expanded="True" />
           </Node>
         </State>
       </Pad>
@@ -33,7 +25,9 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/prashantvc/GitProjects/play.billing.v3/play.billing.v3/BillingService.cs" line="217" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.ItemProperties.InAppService AndroidDeviceId-Release="192.168.56.101:5555" AndroidDeviceId-Debug="192.168.56.101:5555" MonoForAntroid.PreferredDevice="3.7in WVGA (Nexus One)" />

@@ -1,7 +1,6 @@
 using System;
 using Android.Content;
 using Com.Android.Vending.Billing;
-using Android.Util;
 using Xamarin.InAppBilling.Utilities;
 using Android.App;
 
@@ -9,9 +8,10 @@ namespace Xamarin.InAppBilling
 {
 	public class InAppBillingServiceConnection: Java.Lang.Object, IServiceConnection
 	{
-		public InAppBillingServiceConnection (Activity activity)
+		public InAppBillingServiceConnection (Activity activity, string publicKey)
 		{
 			_activity = activity;
+			_publicKey = publicKey;
 		}
 
 		public IInAppBillingService Service {
@@ -37,39 +37,41 @@ namespace Xamarin.InAppBilling
 		{
 			_activity.UnbindService (this);
 		}
+
 		#region IServiceConnection implementation
+
 		public void OnServiceConnected (ComponentName name, Android.OS.IBinder service)
 		{
-			LogDebug ("Billing service connected.");
+			Logger.Debug ("Billing service connected.");
 			Service = IInAppBillingServiceStub.AsInterface (service);
 
 			string packageName = _activity.PackageName;
 
 			try {
-				LogDebug ("Checking for in-app billing V3 support");
+				Logger.Debug ("Checking for in-app billing V3 support");
 
 				int response = Service.IsBillingSupported (Billing.APIVersion, packageName, ItemType.InApp);
 				if (response != BillingResult.OK) {
 					Connected = false;
 				}
 
-				LogDebug ("In-app billing version 3 supported for " + packageName);
+				Logger.Debug ("In-app billing version 3 supported for {0}", packageName);
 
 				// check for v3 subscriptions support
 				response = Service.IsBillingSupported (Billing.APIVersion, packageName, ItemType.Subscription);
 				if (response == BillingResult.OK) {
-					LogDebug ("Subscriptions AVAILABLE.");
+					Logger.Debug ("Subscriptions AVAILABLE.");
 					Connected = true;
 					RaiseOnConnected (Connected);
 
 					return;
 				} else {
-					LogDebug ("Subscriptions NOT AVAILABLE. Response: " + response);
+					Logger.Debug ("Subscriptions NOT AVAILABLE. Response: {0}", response);
 					Connected = false;
 				}
 
 			} catch (Exception ex) {
-				LogDebug (ex.ToString ());
+				Logger.Debug (ex.ToString ());
 				Connected = false;
 			}
 		}
@@ -82,7 +84,9 @@ namespace Xamarin.InAppBilling
 
 			RaiseOnDisconnected ();
 		}
+
 		#endregion
+
 		public bool Connected {
 			get;
 			private set;
@@ -94,7 +98,7 @@ namespace Xamarin.InAppBilling
 				return;
 			}
 
-			BillingHelper = new InAppBillingHelper (_activity, Service);
+			BillingHelper = new InAppBillingHelper (_activity, Service, _publicKey);
 
 			var handler = OnConnected;
 			if (handler != null) {
@@ -110,26 +114,12 @@ namespace Xamarin.InAppBilling
 			}
 		}
 
-		public static void LogDebug (string msg)
-		{
-			Log.Debug (Tag, "In-app billing error: " + msg);
-		}
-
-		public static void LogError (string msg)
-		{
-			Log.Error (Tag, "In-app billing error: " + msg);
-		}
-
-		public static void LogWarn (string msg)
-		{
-			Log.Warn (Tag, "In-app billing warning: " + msg);
-		}
-
 		public event EventHandler OnConnected;
 		public event EventHandler OnDisconnected;
 
 		Activity _activity;
 		const string Tag = "Iab Helper";
+		readonly string _publicKey;
 	}
 }
 

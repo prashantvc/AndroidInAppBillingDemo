@@ -94,7 +94,6 @@ namespace Xamarin.InAppBilling.Utilities
 	/// </summary>
 	public sealed class ItemType
 	{
-
 		/// <summary>
 		/// Gets the in app Item type
 		/// </summary>
@@ -164,6 +163,12 @@ namespace Xamarin.InAppBilling.Utilities
 		public static string InAppDataSignature {
 			get {
 				return "INAPP_DATA_SIGNATURE";
+			}
+		}
+
+		public static string InAppDataSignatureList {
+			get {
+				return "INAPP_DATA_SIGNATURE_LIST";
 			}
 		}
 
