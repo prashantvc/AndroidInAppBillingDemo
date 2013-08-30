@@ -45,6 +45,8 @@ namespace InAppService
 			if (_serviceConnection != null) {
 				_serviceConnection.Disconnected ();
 			}
+
+			base.OnDestroy ();
 		}
 
 		void LoadPurchasedItems ()
