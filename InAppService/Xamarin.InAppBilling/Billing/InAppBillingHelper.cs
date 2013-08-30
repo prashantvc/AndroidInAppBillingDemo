@@ -60,12 +60,6 @@ namespace Xamarin.InAppBilling
 
 		public void LaunchPurchaseFlow (string sku, string itemType, string payload)
 		{
-
-#if DEBUG
-			var consume = _billingService.ConsumePurchase (Billing.APIVersion, _activity.PackageName, "inapp:com.xamarin.InAppService:android.test.purchased");
-			Console.WriteLine ("Consumed: {0}", consume);
-#endif
-
 			Bundle buyIntentBundle = _billingService.GetBuyIntent (Billing.APIVersion, _activity.PackageName, sku, itemType, payload);
 			var response = buyIntentBundle.GetResponseCodeFromBundle ();
 
@@ -77,6 +71,31 @@ namespace Xamarin.InAppBilling
 			if (pendingIntent != null) {
 				_activity.StartIntentSenderForResult (pendingIntent.IntentSender, PurchaseRequestCode, new Intent (), 0, 0, 0);
 			}
+		}
+
+		public bool ConsumePurchase (Purchase purchase)
+		{
+			if (purchase == null) {
+				throw new ArgumentNullException ("purchase");
+			}
+
+			return ConsumePurchase (purchase.PurchaseToken);
+		}
+
+		public bool ConsumePurchase (string token)
+		{
+			if (string.IsNullOrEmpty (token)) {
+				throw new ArgumentException ("Purchase token is null");
+			}
+
+			Logger.Info ("Consuming {0}", token);
+			int response = _billingService.ConsumePurchase (Billing.APIVersion, _activity.PackageName, token);
+			Logger.Info ("Consuming response: {0}", response);
+			if (response != BillingResult.OK) {
+				Logger.Error ("Unable to consume: {0}, Response: {1}", token, response);
+				return false;
+			}
+			return true;
 		}
 
 		public IList<Purchase> GetPurchases (string itemType)
@@ -96,7 +115,7 @@ namespace Xamarin.InAppBilling
 				}
 
 				if (!ValidOwnedItems (ownedItems)) {
-					Logger.Debug("Invalid purchases");
+					Logger.Debug ("Invalid purchases");
 					return purchases;
 				}
 
@@ -136,9 +155,11 @@ namespace Xamarin.InAppBilling
 				return;
 			}
 
-			int response = data.GetReponseCodeFromIntent ();
-			string purchaseData = data.GetStringExtra (Response.InAppPurchaseData);
-			string purchaseSign = data.GetStringExtra (Response.InAppDataSignature);
+
+
+//			int response = data.GetReponseCodeFromIntent ();
+//			string purchaseData = data.GetStringExtra (Response.InAppPurchaseData);
+//			string purchaseSign = data.GetStringExtra (Response.InAppDataSignature);
 		}
 
 		Activity _activity;

@@ -22,4 +22,16 @@
             android:layout_toRightOf="@id/productSpinner"
             android:id="@+id/buyButton" />
     </RelativeLayout>
+    <TextView
+        android:text="Purchased Items (tap to consume)"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView1" />
+    <ListView
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/purchasedItemsList" />
 </LinearLayout>

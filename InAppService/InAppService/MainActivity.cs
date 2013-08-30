@@ -13,7 +13,7 @@ using Xamarin.InAppBilling;
 namespace InAppService
 {
 	[Activity (Label = "InAppService", MainLauncher = true)]
-	public class MainActivity : Activity, AdapterView.IOnItemSelectedListener
+	public class MainActivity : Activity, AdapterView.IOnItemSelectedListener, AdapterView.IOnItemClickListener
 	{
 		protected override void OnCreate (Bundle bundle)
 		{
@@ -29,6 +29,8 @@ namespace InAppService
 			var buyButton = FindViewById<Button> (Resource.Id.buyButton);
 			buyButton.Click += OnBuyButtonClick;
 
+			_lvPurchsedItems = FindViewById<ListView> (Resource.Id.purchasedItemsList);
+			_lvPurchsedItems.OnItemClickListener = this;
 
 			//Disable until we get the items
 			_produtctSpinner.Enabled = false;
@@ -42,6 +44,26 @@ namespace InAppService
 		{
 			if (_serviceConnection != null) {
 				_serviceConnection.Disconnected ();
+			}
+		}
+
+		void LoadPurchasedItems ()
+		{
+			var purchases = _billingHelper.GetPurchases (ItemType.InApp);
+
+			_purchasesAdapter = new PurchaseAdapter (this, purchases);
+			_lvPurchsedItems.Adapter = _purchasesAdapter;
+		}
+
+		void UpdatePurchasedItems ()
+		{
+			var purchases = _billingHelper.GetPurchases (ItemType.InApp);
+			if (_purchasesAdapter != null) {
+				foreach (var item in purchases) {
+					_purchasesAdapter.Items.Add (item);
+				}
+
+				_purchasesAdapter.NotifyDataSetChanged ();
 			}
 		}
 
@@ -63,6 +85,8 @@ namespace InAppService
 		{
 			_billingHelper = _serviceConnection.BillingHelper;
 			GetInventory ();
+
+			LoadPurchasedItems ();
 		}
 
 		async Task GetInventory ()
@@ -91,6 +115,9 @@ namespace InAppService
 		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
 		{
 			_billingHelper.HandleActivityResult (requestCode, resultCode, data);
+
+			//TODO: Use a call back to update the purchased items
+			UpdatePurchasedItems ();
 		}
 
 		public void OnItemSelected (AdapterView parent, Android.Views.View view, int position, long id)
@@ -103,11 +130,31 @@ namespace InAppService
 			//throw new NotImplementedException ();
 		}
 
+		#region IOnItemClickListener implementation
+
+		public void OnItemClick (AdapterView parent, Android.Views.View view, int position, long id)
+		{
+			string productid = ((TextView)view).Text;
+			var purchases = _purchasesAdapter.Items;
+			var purchasedItem = purchases.FirstOrDefault (p => p.ProductId == productid);
+			if (purchasedItem != null) {
+				bool result = _billingHelper.ConsumePurchase (purchasedItem);
+				if (result) {
+					_purchasesAdapter.Items.Remove (purchasedItem);
+					_purchasesAdapter.NotifyDataSetChanged ();
+				}
+			}
+		}
+
+		#endregion
+
 		IInAppBillingHelper _billingHelper;
 		Spinner _produtctSpinner;
 		Product _selectedProduct;
 		IList<Product> _products;
 		InAppBillingServiceConnection _serviceConnection;
+		ListView _lvPurchsedItems;
+		PurchaseAdapter _purchasesAdapter;
 	}
 }
 

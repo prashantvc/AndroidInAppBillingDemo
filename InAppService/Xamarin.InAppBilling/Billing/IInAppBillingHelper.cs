@@ -45,6 +45,20 @@ namespace Xamarin.InAppBilling
 		/// <returns>The purchases.</returns>
 		/// <param name="itemType">Item type (inapp or subs)</param>
 		IList<Purchase> GetPurchases (string itemType);
+
+		/// <summary>
+		/// Consumes the purchased item
+		/// </summary>
+		/// <returns><c>true</c>, if purchased item was consumed, <c>false</c> otherwise.</returns>
+		/// <param name="purchase">Purchased item</param>
+		bool ConsumePurchase (Purchase purchase);
+
+		/// <summary>
+		/// Consumes the purchased item
+		/// </summary>
+		/// <returns><c>true</c>, if purchased item was consumed, <c>false</c> otherwise.</returns>
+		/// <param name="token">Token.</param>
+		bool ConsumePurchase (string token);
 	}
 }
 
