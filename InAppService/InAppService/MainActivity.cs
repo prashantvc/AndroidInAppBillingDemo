@@ -10,6 +10,7 @@ using Xamarin.InAppBilling.Model;
 using Xamarin.InAppBilling.Utilities;
 using Xamarin.InAppBilling;
 
+
 namespace InAppService
 {
 	[Activity (Label = "InAppService", MainLauncher = true)]
